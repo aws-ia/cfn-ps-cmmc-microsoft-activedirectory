@@ -1,20 +1,13 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description:
-  This template creates a VPC infrastructure for a Multi-AZ, multi-tier
-  deployment of a Windows-based application infrastructure. It installs two Windows
-  2019 Active Directory domain controllers into private subnets in separate Availability
-  Zones inside a VPC, as well as Remote Desktop Gateway instances and managed NAT
-  gateways into the public subnet for each Availability Zone. The default domain administrator
-  password is the one retrieved from the instance. For adding members to the
-  domain, ensure that they are launched into the domain member security group created
-  by this template and then configure them to use the Active Directory instances's fixed private IP
-  addresses as the DNS server. **WARNING** This template creates an Amazon EC2 Windows
-  instance and related resources. You will be billed for the AWS resources used if
-  you create a stack from this template. (qs-1raijs4oo)
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template creates a VPC infrastructure for a Multi-AZ, multi-tier deployment of a Windows-based application infrastructure. It installs two Windows 2019 Active Directory domain controllers
+  into private subnets in separate Availability Zones inside a VPC, as well as Remote Desktop Gateway instances and managed NAT gateways into the public subnet for each Availability Zone. The default domain
+  administrator password is the one retrieved from the instance. For adding members to the domain, ensure that they are launched into the domain member security group created by this template and then configure
+  them to use the Active Directory instances's fixed private IP addresses as the DNS server. **WARNING** This template creates an Amazon EC2 Windows instance and related resources. You will be billed for
+  the AWS resources used if you create a stack from this template. (qs-1raijs4oo)
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for launching into a new or existing VPC"
-    Order: "1"
+    EntrypointName: Parameters for launching into a new or existing VPC
+    Order: '1'
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -174,12 +167,10 @@ Metadata:
 Parameters:
   AdministratorPassword:
     AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
-    Description:
-      Password for the domain administrator account. User name is *Administrator*. Must be at least eight characters
-      containing letters, numbers, and symbols.
-    MaxLength: "32"
-    MinLength: "8"
-    NoEcho: "true"
+    Description: Password for the domain administrator account. User name is *Administrator*. Must be at least eight characters containing letters, numbers, and symbols.
+    MaxLength: '32'
+    MinLength: '8'
+    NoEcho: 'true'
     Type: String
   ADServer1InstanceType:
     AllowedValues:
@@ -200,15 +191,13 @@ Parameters:
     AllowedPattern: '[a-zA-Z0-9\-]+'
     Default: DC1
     Description: NetBIOS name of the first Active Directory server (up to 15 characters).
-    MaxLength: "15"
-    MinLength: "1"
+    MaxLength: '15'
+    MinLength: '1'
     Type: String
   ADServer1PrivateIP:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$
     Default: 10.0.0.10
-    Description:
-      Fixed private IP addressfor the first Active Directory server located in
-      Availability Zone 1.
+    Description: Fixed private IP addressfor the first Active Directory server located in Availability Zone 1.
     Type: String
   ADServer2InstanceType:
     AllowedValues:
@@ -229,123 +218,95 @@ Parameters:
     AllowedPattern: '[a-zA-Z0-9\-]+'
     Default: DC2
     Description: NetBIOS name of the second Active Directory server (up to 15 characters).
-    MaxLength: "15"
-    MinLength: "1"
+    MaxLength: '15'
+    MinLength: '1'
     Type: String
   ADServer2PrivateIP:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$
     Default: 10.0.32.10
-    Description:
-      Fixed private IP address for the second Active Directory server located in
-      Availability Zone 2.
+    Description: Fixed private IP address for the second Active Directory server located in Availability Zone 2.
     Type: String
   AvailabilityZones:
-    Description:
-      "List of Availability Zones to use for the subnets in the VPC. Note:
-      The logical order is preserved and only two Availability Zones are used for this deployment."
+    Description: 'List of Availability Zones to use for the subnets in the VPC. Note: The logical order is preserved and only two Availability Zones are used for this deployment.'
     Type: List<AWS::EC2::AvailabilityZone::Name>
   BackupPolicy:
     AllowedValues:
-      - "standard"
-      - "dev"
-      - "none"
-    Default: "standard"
+      - standard
+      - dev
+      - none
+    Default: standard
     Description: Select a valid backup policy to employ.
     Type: String
   CreateS3Buckets:
     AllowedValues:
-      - "yes"
-      - "no"
-    Default: "yes"
+      - 'yes'
+      - 'no'
+    Default: 'yes'
     Description: Create new S3 buckets.
     Type: String
   DomainAdminPassword:
     AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
-    Description:
-      Password for the domain administrator user. Must be at least eight characters
-      containing letters, numbers, and symbols.
-    MaxLength: "32"
-    MinLength: "8"
-    NoEcho: "true"
+    Description: Password for the domain administrator user. Must be at least eight characters containing letters, numbers, and symbols.
+    MaxLength: '32'
+    MinLength: '8'
+    NoEcho: 'true'
     Type: String
   DomainAdminUser:
-    AllowedPattern: "[a-zA-Z0-9]*"
+    AllowedPattern: '[a-zA-Z0-9]*'
     Default: Admin
-    Description:
-      User name for the account that is added as domain administrator.
-      This is separate from the default "Administrator" account.
-    MaxLength: "25"
-    MinLength: "5"
+    Description: User name for the account that is added as domain administrator. This is separate from the default "Administrator" account.
+    MaxLength: '25'
+    MinLength: '5'
     Type: String
   DomainDNSName:
     AllowedPattern: '[a-zA-Z0-9\-]+\..+'
     Default: example.com
-    Description:
-      Fully qualified domain name (FQDN) of the forest root domain (e.g. example.com).
-    MaxLength: "255"
-    MinLength: "2"
+    Description: Fully qualified domain name (FQDN) of the forest root domain (e.g. example.com).
+    MaxLength: '255'
+    MinLength: '2'
     Type: String
   DomainNetBIOSName:
     AllowedPattern: '[a-zA-Z0-9\-]+'
     Default: example
-    Description:
-      NetBIOS name of the domain (up to 15 characters) for users of earlier
-      versions of Windows (e.g. EXAMPLE).
-    MaxLength: "15"
-    MinLength: "1"
+    Description: NetBIOS name of the domain (up to 15 characters) for users of earlier versions of Windows (e.g. EXAMPLE).
+    MaxLength: '15'
+    MinLength: '1'
     Type: String
   GPOS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
-    ConstraintDescription: GPO bucket name can include numbers, lowercase
-      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
-      (-).
+    ConstraintDescription: GPO bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Default: gpo-bucket
-    Description:
-      S3 bucket name for uploading the Defense Information Systems Agency (DISA) Security Technical Implementation Guides (STIGS) GPO packages. Certificate revocation list (CRL) bucket name
-      can include numbers, lowercase letters, uppercase letters, and hyphens (-).
-      It cannot start or end with a hyphen (-).
+    Description: S3 bucket name for uploading the Defense Information Systems Agency (DISA) Security Technical Implementation Guides (STIGS) GPO packages. Certificate revocation list (CRL) bucket name can
+      include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Type: String
   CAAdministratorPassword:
     AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
-    Description:
-      Password for the CA administrator. User name is Administrator. Must be at least eight characters
-      containing letters, numbers, and symbols.
-    MaxLength: "32"
-    MinLength: "8"
-    NoEcho: "true"
+    Description: Password for the CA administrator. User name is Administrator. Must be at least eight characters containing letters, numbers, and symbols.
+    MaxLength: '32'
+    MinLength: '8'
+    NoEcho: 'true'
     Type: String
   CRLS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
-    ConstraintDescription: CRL bucket name can include numbers, lowercase
-      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
-      (-).
+    ConstraintDescription: CRL bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Default: ad-crl-bucket
-    Description:
-      S3 bucket name for storing CRLs and certificates. CRL bucket name
-      can include numbers, lowercase letters, uppercase letters, and hyphens (-).
-      It cannot start or end with a hyphen (-).
+    Description: S3 bucket name for storing CRLs and certificates. CRL bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Type: String
   KeyPairName:
-    Description:
-      Public/private key pairs for helping you securely connect to your instance
-      after it launches.
+    Description: Public/private key pairs for helping you securely connect to your instance after it launches.
     Type: AWS::EC2::KeyPair::KeyName
   LogsS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
-    ConstraintDescription: Bucket name can include numbers, lowercase
-      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
-      (-).
+    ConstraintDescription: Bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Default: ad-logs-bucket
-    Description: S3 bucket name for storing logs. Logs bucket name
-      can include numbers, lowercase letters, uppercase letters, and hyphens (-).
-      It cannot start or end with a hyphen (-).
+    Description: S3 bucket name for storing logs. Logs bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Type: String
   PatchWindow:
     AllowedValues:
-      - "prod"
-      - "test"
-      - "manual"
-    Default: "prod"
+      - prod
+      - test
+      - manual
+    Default: prod
     Description: Select a valid patch window schema.
     Type: String
   PrivateSubnet1CIDR:
@@ -357,7 +318,7 @@ Parameters:
   PrivateSubnet1ID:
     Description: (Conditional) Subnet ID for private subnet 1 located in Availability Zone 1. Enter either a CIDR or subnet ID, not both.
     Type: String
-    Default: ""
+    Default: ''
   PrivateSubnet2CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
@@ -367,7 +328,7 @@ Parameters:
   PrivateSubnet2ID:
     Description: (Conditional) Subnet ID for private subnet 2 located in Availability Zone 2. Enter either a CIDR or subnet ID, not both.
     Type: String
-    Default: ""
+    Default: ''
   PublicSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
@@ -377,7 +338,7 @@ Parameters:
   PublicSubnet1ID:
     Description: (Conditional) Subnet ID for the public DMZ subnet 1 located in Availability Zone 1. Enter either a CIDR or subnet ID, not both.
     Type: String
-    Default: ""
+    Default: ''
   PublicSubnet2CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
@@ -387,7 +348,7 @@ Parameters:
   PublicSubnet2ID:
     Description: (Conditional) Subnet ID for the public DMZ subnet 2 located in Availability Zone 2. Enter either a CIDR or subnet ID, not both.
     Type: String
-    Default: ""
+    Default: ''
   RDGWInstanceType:
     Description: Amazon EC2 instance type for the Remote Desktop Gateway instances.
     Type: String
@@ -407,17 +368,15 @@ Parameters:
     Type: String
   RestoreModePassword:
     AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
-    Description:
-      Password for the domain administrator user. Must be at least eight characters
-      containing letters, numbers, and symbols.
-    MaxLength: "32"
-    MinLength: "8"
-    NoEcho: "true"
+    Description: Password for the domain administrator user. Must be at least eight characters containing letters, numbers, and symbols.
+    MaxLength: '32'
+    MinLength: '8'
+    NoEcho: 'true'
     Type: String
   RootCANetBIOSName:
-    Default: "RootCA"
-    Description: "NetBIOS name of the root CA (up to 15 characters)."
-    Type: "String"
+    Default: RootCA
+    Description: NetBIOS name of the root CA (up to 15 characters).
+    Type: String
   RootCAInstanceType:
     AllowedValues:
       - t2.large
@@ -441,49 +400,31 @@ Parameters:
   S3VPCEndpointId:
     Description: (Conditional) VPC S3 endpoint ID to allow access within the private network to S3 buckets.
     Type: String
-    Default: ""
+    Default: ''
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
-    ConstraintDescription:
-      The Quick Start bucket name can include numbers, lowercase
-      letters, uppercase letters, and hyphens (-). It cannot start or end with a 
-      hyphen (-).
+    ConstraintDescription: The Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Default: aws-ia-us-east-1
-    Description:
-      Name of the S3 bucket for your copy of the Quick Start assets. 
-      Keep the default name unless you are customizing the template. 
-      Changing the name updates code references to point to a new Quick 
-      Start location. This name can include numbers, lowercase letters, 
-      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
-      See https://aws-quickstart.github.io/option1.html.
+    Description: Name of the S3 bucket for your copy of the Quick Start assets. Keep the default name unless you are customizing the template. Changing the name updates code references to point to a new
+      Quick Start location. This name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-). See https://aws-quickstart.github.io/option1.html.
     Type: String
   QSS3BucketRegion:
     Default: us-gov-west-1
-    Description: 'AWS Region where the Quick Start S3 bucket (QSS3BucketName) is 
-    hosted. Keep the default Region unless you are customizing the template. 
-    Changing this Region updates code references to point to a new Quick Start location. 
-    When using your own bucket, specify the Region. 
-    See https://aws-quickstart.github.io/option1.html.'
+    Description: AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. Keep the default Region unless you are customizing the template. Changing this Region updates code references to point
+      to a new Quick Start location. When using your own bucket, specify the Region. See https://aws-quickstart.github.io/option1.html.
     Type: String
   QSS3KeyPrefix:
     AllowedPattern: ^[0-9a-zA-Z-/]*$
-    ConstraintDescription:
-      The Quick Start S3 key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slashes (/).
+    ConstraintDescription: The Quick Start S3 key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/).
     Default: cfn-ps-cmmc-microsoft-activedirectory/
-    Description:
-     S3 key prefix that is used to simulate a directory for your copy of the 
-      Quick Start assets. Keep the default prefix unless you are customizing 
-      the template. Changing this prefix updates code references to point to 
-      a new Quick Start location. This prefix can include numbers, lowercase 
-      letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash. 
-      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+    Description: S3 key prefix that is used to simulate a directory for your copy of the Quick Start assets. Keep the default prefix unless you are customizing the template. Changing this prefix updates
+      code references to point to a new Quick Start location. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash. See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
       and https://aws-quickstart.github.io/option1.html.
     Type: String
   SubordinateCANetBIOSName:
-    Default: "SubordinateCA"
-    Description: "NetBIOS name of the subordinate CA (up to 15 characters)."
-    Type: "String"
+    Default: SubordinateCA
+    Description: NetBIOS name of the subordinate CA (up to 15 characters).
+    Type: String
   SubordinateCAInstanceType:
     AllowedValues:
       - t2.large
@@ -502,8 +443,7 @@ Parameters:
   SubordinateCAPrivateIP:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$
     Default: 10.0.0.12
-    Description: Fixed private IP address for the subordinate CA located in
-      Availability Zone 1.
+    Description: Fixed private IP address for the subordinate CA located in Availability Zone 1.
     Type: String
   VPCCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
@@ -514,216 +454,344 @@ Parameters:
   VPCID:
     Description: (Conditional) Existing VPC ID within which any specified subnet IDs reside. Leave blank to create a new VPC.
     Type: String
-    Default: ""
+    Default: ''
   WS2019FULLBASE:
     Description: AWS Systems Manager parameter value to grab the latest Amazon Machine Image (AMI) ID (WS2019FULLBASE)
-    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
-    Default: "/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base"
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
 Conditions:
-  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, "aws-quickstart"]
-  NewS3Buckets: !Equals [!Ref CreateS3Buckets, "yes"]
-  CreateVPC: !Or
-    - !Equals [!Ref "PrivateSubnet1ID", ""]
-    - !Equals [!Ref "PrivateSubnet2ID", ""]
-    - !Equals [!Ref "PublicSubnet1ID", ""]
-    - !Equals [!Ref "PublicSubnet2ID", ""]
-    - !Equals [!Ref "VPCID", ""]
+  UsingDefaultBucket:
+    Fn::Equals:
+      - Ref: QSS3BucketName
+      - aws-quickstart
+  NewS3Buckets:
+    Fn::Equals:
+      - Ref: CreateS3Buckets
+      - 'yes'
+  CreateVPC:
+    Fn::Or:
+      - Fn::Equals:
+          - Ref: PrivateSubnet1ID
+          - ''
+      - Fn::Equals:
+          - Ref: PrivateSubnet2ID
+          - ''
+      - Fn::Equals:
+          - Ref: PublicSubnet1ID
+          - ''
+      - Fn::Equals:
+          - Ref: PublicSubnet2ID
+          - ''
+      - Fn::Equals:
+          - Ref: VPCID
+          - ''
 Resources:
   CopyZipsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
         Fn::Sub:
-          - "https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/copy-zips.template.yaml"
-          - S3Region: !If
-              - UsingDefaultBucket
-              - !Ref AWS::Region
-              - !Ref QSS3BucketRegion
-            S3Bucket: !If
-              - UsingDefaultBucket
-              - !Sub "${QSS3BucketName}-${AWS::Region}"
-              - !Ref QSS3BucketName
+          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/copy-zips.template.yaml
+          - S3Region:
+              Fn::If:
+                - UsingDefaultBucket
+                - Ref: AWS::Region
+                - Ref: QSS3BucketRegion
+            S3Bucket:
+              Fn::If:
+                - UsingDefaultBucket
+                - Fn::Sub: ${QSS3BucketName}-${AWS::Region}
+                - Ref: QSS3BucketName
       Parameters:
-        QSS3BucketName: !Ref QSS3BucketName
-        QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        QSS3BucketRegion: !Ref QSS3BucketRegion
-        SourceObjects: "archives/GPOPackagesFunction.zip"
-
+        QSS3BucketName:
+          Ref: QSS3BucketName
+        QSS3KeyPrefix:
+          Ref: QSS3KeyPrefix
+        QSS3BucketRegion:
+          Ref: QSS3BucketRegion
+        SourceObjects: archives/GPOPackagesFunction.zip
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Condition: CreateVPC
     Properties:
-      # TemplateURL: !Sub "${SourceLocation}/templates/nested/aws-vpc.template.yaml"
       TemplateURL:
         Fn::Sub:
-          - "https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/aws-vpc.template.yaml"
-          - S3Region: !If
-              - UsingDefaultBucket
-              - !Ref AWS::Region
-              - !Ref QSS3BucketRegion
-            S3Bucket: !If
-              - UsingDefaultBucket
-              - !Sub '${QSS3BucketName}-${AWS::Region}'
-              - !Ref QSS3BucketName
+          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/aws-vpc.template.yaml
+          - S3Region:
+              Fn::If:
+                - UsingDefaultBucket
+                - Ref: AWS::Region
+                - Ref: QSS3BucketRegion
+            S3Bucket:
+              Fn::If:
+                - UsingDefaultBucket
+                - Fn::Sub: ${QSS3BucketName}-${AWS::Region}
+                - Ref: QSS3BucketName
       Parameters:
-        AvailabilityZones: !Join [",", !Ref "AvailabilityZones"]
-        PrivateSubnet1ACIDR: !Ref "PrivateSubnet1CIDR"
-        PrivateSubnet2ACIDR: !Ref "PrivateSubnet2CIDR"
-        PublicSubnet1CIDR: !Ref "PublicSubnet1CIDR"
-        PublicSubnet2CIDR: !Ref "PublicSubnet2CIDR"
-        VPCCIDR: !Ref "VPCCIDR"
+        AvailabilityZones:
+          Fn::Join:
+            - ','
+            - Ref: AvailabilityZones
+        PrivateSubnet1ACIDR:
+          Ref: PrivateSubnet1CIDR
+        PrivateSubnet2ACIDR:
+          Ref: PrivateSubnet2CIDR
+        PublicSubnet1CIDR:
+          Ref: PublicSubnet1CIDR
+        PublicSubnet2CIDR:
+          Ref: PublicSubnet2CIDR
+        VPCCIDR:
+          Ref: VPCCIDR
   ADStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      # TemplateURL: !Sub "${SourceLocation}/templates/nested/ad-1-ssm.template.yaml"
       TemplateURL:
         Fn::Sub:
-          - "https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/ad-1-ssm.template.yaml"
-          - S3Region: !If
-              - UsingDefaultBucket
-              - !Ref AWS::Region
-              - !Ref QSS3BucketRegion
-            S3Bucket: !If
-              - UsingDefaultBucket
-              - !Sub "${QSS3BucketName}-${AWS::Region}"
-              - !Ref QSS3BucketName
+          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/ad-1-ssm.template.yaml
+          - S3Region:
+              Fn::If:
+                - UsingDefaultBucket
+                - Ref: AWS::Region
+                - Ref: QSS3BucketRegion
+            S3Bucket:
+              Fn::If:
+                - UsingDefaultBucket
+                - Fn::Sub: ${QSS3BucketName}-${AWS::Region}
+                - Ref: QSS3BucketName
       Parameters:
-        AdministratorPassword: !Ref "AdministratorPassword"
-        ADServer1InstanceType: !Ref "ADServer1InstanceType"
-        ADServer1NetBIOSName: !Ref "ADServer1NetBIOSName"
-        ADServer1PrivateIP: !Ref "ADServer1PrivateIP"
-        ADServer2InstanceType: !Ref "ADServer2InstanceType"
-        ADServer2NetBIOSName: !Ref "ADServer2NetBIOSName"
-        ADServer2PrivateIP: !Ref "ADServer2PrivateIP"
-        BackupPolicy: !Ref "BackupPolicy"
-        CreateS3Buckets: !Ref "CreateS3Buckets"
-        CRLS3BucketName: !Ref "CRLS3BucketName"
-        DomainAdminPassword: !Ref "DomainAdminPassword"
-        DomainAdminUser: !Ref "DomainAdminUser"
-        DomainDNSName: !Ref "DomainDNSName"
-        DomainNetBIOSName: !Ref "DomainNetBIOSName"
-        GPOS3BucketName: !Ref "GPOS3BucketName"
-        KeyPairName: !Ref "KeyPairName"
-        KMSKeyId: !Ref "KMSKey"
-        LambdaZipsBucket: !GetAtt "CopyZipsStack.Outputs.LambdaZipsBucket"
-        LogsS3BucketName: !Ref "LogsS3BucketName"
-        PatchWindow: !Ref "PatchWindow"
+        AdministratorPassword:
+          Ref: AdministratorPassword
+        ADServer1InstanceType:
+          Ref: ADServer1InstanceType
+        ADServer1NetBIOSName:
+          Ref: ADServer1NetBIOSName
+        ADServer1PrivateIP:
+          Ref: ADServer1PrivateIP
+        ADServer2InstanceType:
+          Ref: ADServer2InstanceType
+        ADServer2NetBIOSName:
+          Ref: ADServer2NetBIOSName
+        ADServer2PrivateIP:
+          Ref: ADServer2PrivateIP
+        BackupPolicy:
+          Ref: BackupPolicy
+        CreateS3Buckets:
+          Ref: CreateS3Buckets
+        CRLS3BucketName:
+          Ref: CRLS3BucketName
+        DomainAdminPassword:
+          Ref: DomainAdminPassword
+        DomainAdminUser:
+          Ref: DomainAdminUser
+        DomainDNSName:
+          Ref: DomainDNSName
+        DomainNetBIOSName:
+          Ref: DomainNetBIOSName
+        GPOS3BucketName:
+          Ref: GPOS3BucketName
+        KeyPairName:
+          Ref: KeyPairName
+        KMSKeyId:
+          Ref: KMSKey
+        LambdaZipsBucket:
+          Fn::GetAtt:
+            - CopyZipsStack
+            - Outputs.LambdaZipsBucket
+        LogsS3BucketName:
+          Ref: LogsS3BucketName
+        PatchWindow:
+          Ref: PatchWindow
         PrivateSubnet1ID:
-          !If [
-            CreateVPC,
-            !GetAtt "VPCStack.Outputs.PrivateSubnet1AID",
-            !Ref "PrivateSubnet1ID",
-          ]
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.PrivateSubnet1AID
+            - Ref: PrivateSubnet1ID
         PrivateSubnet2ID:
-          !If [
-            CreateVPC,
-            !GetAtt "VPCStack.Outputs.PrivateSubnet2AID",
-            !Ref "PrivateSubnet2ID",
-          ]
-        RestoreModePassword: !Ref "RestoreModePassword"
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.PrivateSubnet2AID
+            - Ref: PrivateSubnet2ID
+        RestoreModePassword:
+          Ref: RestoreModePassword
         S3VPCEndpointId:
-          !If [
-            CreateVPC,
-            !GetAtt "VPCStack.Outputs.S3VPCEndpoint",
-            !Ref "S3VPCEndpointId",
-          ]
-        QSS3BucketName: !Ref "QSS3BucketName"
-        QSS3BucketRegion: !Ref "QSS3BucketRegion"
-        QSS3KeyPrefix: !Ref "QSS3KeyPrefix"
-        VPCCIDR: !Ref "VPCCIDR"
-        VPCID: !If [CreateVPC, !GetAtt "VPCStack.Outputs.VPCID", !Ref "VPCID"]
-        WS2019FULLBASE: !Ref "WS2019FULLBASE"
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.S3VPCEndpoint
+            - Ref: S3VPCEndpointId
+        QSS3BucketName:
+          Ref: QSS3BucketName
+        QSS3BucketRegion:
+          Ref: QSS3BucketRegion
+        QSS3KeyPrefix:
+          Ref: QSS3KeyPrefix
+        VPCCIDR:
+          Ref: VPCCIDR
+        VPCID:
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.VPCID
+            - Ref: VPCID
+        WS2019FULLBASE:
+          Ref: WS2019FULLBASE
   RDGWStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      # TemplateURL: !Sub "${SourceLocation}/templates/nested/rdgw-domain.template.yaml"
       TemplateURL:
         Fn::Sub:
-          - "https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/rdgw-domain.template.yaml"
-          - S3Region: !If
-              - UsingDefaultBucket
-              - !Ref AWS::Region
-              - !Ref QSS3BucketRegion
-            S3Bucket: !If
-              - UsingDefaultBucket
-              - !Sub "${QSS3BucketName}-${AWS::Region}"
-              - !Ref QSS3BucketName
+          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/rdgw-domain.template.yaml
+          - S3Region:
+              Fn::If:
+                - UsingDefaultBucket
+                - Ref: AWS::Region
+                - Ref: QSS3BucketRegion
+            S3Bucket:
+              Fn::If:
+                - UsingDefaultBucket
+                - Fn::Sub: ${QSS3BucketName}-${AWS::Region}
+                - Ref: QSS3BucketName
       Parameters:
-        BackupPolicy: !Ref "BackupPolicy"
-        DomainAdminSecret: !GetAtt "ADStack.Outputs.SecretsArn"
-        DomainDNSName: !Ref "DomainDNSName"
-        DomainMemberSGID: !GetAtt "ADStack.Outputs.DomainMemberSGID"
-        DomainNetBIOSName: !Ref "DomainNetBIOSName"
-        KeyPairName: !Ref "KeyPairName"
-        KMSKeyId: !Ref "KMSKey"
-        PatchWindow: !Ref "PatchWindow"
+        BackupPolicy:
+          Ref: BackupPolicy
+        DomainAdminSecret:
+          Fn::GetAtt:
+            - ADStack
+            - Outputs.SecretsArn
+        DomainDNSName:
+          Ref: DomainDNSName
+        DomainMemberSGID:
+          Fn::GetAtt:
+            - ADStack
+            - Outputs.DomainMemberSGID
+        DomainNetBIOSName:
+          Ref: DomainNetBIOSName
+        KeyPairName:
+          Ref: KeyPairName
+        KMSKeyId:
+          Ref: KMSKey
+        PatchWindow:
+          Ref: PatchWindow
         PublicSubnet1ID:
-          !If [
-            CreateVPC,
-            !GetAtt "VPCStack.Outputs.PublicSubnet1ID",
-            !Ref "PublicSubnet1ID",
-          ]
-        RDGWInstanceType: !Ref "RDGWInstanceType"
-        RDGWCIDR: !Ref "RDGWCIDR"
-        QSS3BucketName: !Ref "QSS3BucketName"
-        QSS3BucketRegion: !Ref "QSS3BucketRegion"
-        QSS3KeyPrefix: !Ref "QSS3KeyPrefix"
-        VPCID: !If [CreateVPC, !GetAtt "VPCStack.Outputs.VPCID", !Ref "VPCID"]
-        WS2019FULLBASE: !Ref "WS2019FULLBASE"
-
-  # This stack creates a Microsoft Enterprise Certificate Authority chain
-  # consisting of a Root CA and a Subordinate CA.
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.PublicSubnet1ID
+            - Ref: PublicSubnet1ID
+        RDGWInstanceType:
+          Ref: RDGWInstanceType
+        RDGWCIDR:
+          Ref: RDGWCIDR
+        QSS3BucketName:
+          Ref: QSS3BucketName
+        QSS3BucketRegion:
+          Ref: QSS3BucketRegion
+        QSS3KeyPrefix:
+          Ref: QSS3KeyPrefix
+        VPCID:
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.VPCID
+            - Ref: VPCID
+        WS2019FULLBASE:
+          Ref: WS2019FULLBASE
   CAStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      # TemplateURL: !Sub "${SourceLocation}/templates/nested/ad-ca.template.yaml"
       TemplateURL:
         Fn::Sub:
-          - "https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/ad-ca.template.yaml"
-          - S3Region: !If
-              - UsingDefaultBucket
-              - !Ref AWS::Region
-              - !Ref QSS3BucketRegion
-            S3Bucket: !If
-              - UsingDefaultBucket
-              - !Sub "${QSS3BucketName}-${AWS::Region}"
-              - !Ref QSS3BucketName
+          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/nested/ad-ca.template.yaml
+          - S3Region:
+              Fn::If:
+                - UsingDefaultBucket
+                - Ref: AWS::Region
+                - Ref: QSS3BucketRegion
+            S3Bucket:
+              Fn::If:
+                - UsingDefaultBucket
+                - Fn::Sub: ${QSS3BucketName}-${AWS::Region}
+                - Ref: QSS3BucketName
       Parameters:
-        BackupPolicy: !Ref "BackupPolicy"
-        CAAdministratorPassword: !Ref "CAAdministratorPassword"
-        CRLS3BucketName: !Ref "CRLS3BucketName"
-        DomainAdminSecret: !GetAtt "ADStack.Outputs.SecretsArn"
-        DomainControllersSGID: !GetAtt "ADStack.Outputs.DomainControllersSGID"
-        DomainDNSName: !Ref "DomainDNSName"
-        DomainMembersSGID: !GetAtt "ADStack.Outputs.DomainMemberSGID"
-        DomainNetBIOSName: !Ref "DomainNetBIOSName"
-        KeyPairName: !Ref "KeyPairName"
-        KMSKeyId: !Ref "KMSKey"
-        LogsS3BucketName: !Ref "LogsS3BucketName"
-        PatchWindow: !Ref "PatchWindow"
+        BackupPolicy:
+          Ref: BackupPolicy
+        CAAdministratorPassword:
+          Ref: CAAdministratorPassword
+        CRLS3BucketName:
+          Ref: CRLS3BucketName
+        DomainAdminSecret:
+          Fn::GetAtt:
+            - ADStack
+            - Outputs.SecretsArn
+        DomainControllersSGID:
+          Fn::GetAtt:
+            - ADStack
+            - Outputs.DomainControllersSGID
+        DomainDNSName:
+          Ref: DomainDNSName
+        DomainMembersSGID:
+          Fn::GetAtt:
+            - ADStack
+            - Outputs.DomainMemberSGID
+        DomainNetBIOSName:
+          Ref: DomainNetBIOSName
+        KeyPairName:
+          Ref: KeyPairName
+        KMSKeyId:
+          Ref: KMSKey
+        LogsS3BucketName:
+          Ref: LogsS3BucketName
+        PatchWindow:
+          Ref: PatchWindow
         PrivateSubnet1ID:
-          !If [
-            CreateVPC,
-            !GetAtt "VPCStack.Outputs.PrivateSubnet1AID",
-            !Ref "PrivateSubnet1ID",
-          ]
-        RootCANetBIOSName: !Ref "RootCANetBIOSName"
-        RootCAInstanceType: !Ref "RootCAInstanceType"
-        RootCAPrivateIP: !Ref "RootCAPrivateIP"
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.PrivateSubnet1AID
+            - Ref: PrivateSubnet1ID
+        RootCANetBIOSName:
+          Ref: RootCANetBIOSName
+        RootCAInstanceType:
+          Ref: RootCAInstanceType
+        RootCAPrivateIP:
+          Ref: RootCAPrivateIP
         S3VPCEndpointId:
-          !If [
-            CreateVPC,
-            !GetAtt "VPCStack.Outputs.S3VPCEndpoint",
-            !Ref "S3VPCEndpointId",
-          ]
-        QSS3BucketName: !Ref "QSS3BucketName"
-        QSS3BucketRegion: !Ref "QSS3BucketRegion"
-        QSS3KeyPrefix: !Ref "QSS3KeyPrefix"
-        SubordinateCANetBIOSName: !Ref "SubordinateCANetBIOSName"
-        SubordinateCAInstanceType: !Ref "SubordinateCAInstanceType"
-        SubordinateCAPrivateIP: !Ref "SubordinateCAPrivateIP"
-        VPCID: !If [CreateVPC, !GetAtt "VPCStack.Outputs.VPCID", !Ref "VPCID"]
-        WS2019FULLBASE: !Ref "WS2019FULLBASE"
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.S3VPCEndpoint
+            - Ref: S3VPCEndpointId
+        QSS3BucketName:
+          Ref: QSS3BucketName
+        QSS3BucketRegion:
+          Ref: QSS3BucketRegion
+        QSS3KeyPrefix:
+          Ref: QSS3KeyPrefix
+        SubordinateCANetBIOSName:
+          Ref: SubordinateCANetBIOSName
+        SubordinateCAInstanceType:
+          Ref: SubordinateCAInstanceType
+        SubordinateCAPrivateIP:
+          Ref: SubordinateCAPrivateIP
+        VPCID:
+          Fn::If:
+            - CreateVPC
+            - Fn::GetAtt:
+                - VPCStack
+                - Outputs.VPCID
+            - Ref: VPCID
+        WS2019FULLBASE:
+          Ref: WS2019FULLBASE
   KMSKey:
     Type: AWS::KMS::Key
     Properties:
@@ -736,8 +804,9 @@ Resources:
           - Action: kms:*
             Effect: Allow
             Principal:
-              AWS: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
-            Resource: "*"
+              AWS:
+                Fn::Sub: arn:${AWS::Partition}:iam::${AWS::AccountId}:root
+            Resource: '*'
             Sid: Enable IAM User Permissions
           - Action:
               - kms:GenerateDataKey
@@ -748,8 +817,17 @@ Resources:
                 - sqs.amazonaws.com
                 - s3.amazonaws.com
                 - events.amazonaws.com
-            Resource: "*"
+            Resource: '*'
             Sid: Allow access for AWS services
         Version: 2012-10-17
       KeyUsage: ENCRYPT_DECRYPT
       PendingWindowInDays: 7
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyActionWildcard
+            - EIAMPolicyWildcardResource
+          ignore_reasons:
+            - EIAMPolicyActionWildcard: Intent assumed for initial migration.
+            - EIAMPolicyWildcardResource: Intent assumed for initial migration.
