@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: This CloudFormation Template invokes another template responsible for copying files to a local region S3 Bucket for AWS Lambda.
+Description: This CloudFormation Template invokes another template responsible for copying files to a local region S3 Bucket for AWS Lambda. (qs-1ui8pjc5m)
 Parameters:
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$

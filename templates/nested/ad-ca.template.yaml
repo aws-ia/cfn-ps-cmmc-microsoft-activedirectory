@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: "This template creates a Microsoft Enterprise Certificate Authority chain consisting of a Root CA and a Subordinate CA.\n"
+Description: "This template creates a Microsoft Enterprise Certificate Authority chain consisting of a Root CA and a Subordinate CA.\n (qs-1ui8pjb4e)"
 Parameters:
   BackupPolicy:
     AllowedValues:
