@@ -933,3 +933,9 @@ Outputs:
   CASecretsArn:
     Value:
       Ref: CAAdminSecrets
+  LogsS3BucketName:
+    Value:
+      Ref: LogsS3BucketName
+  S3VPCEndpointId:
+    Value:
+      Ref: S3VPCEndpointId

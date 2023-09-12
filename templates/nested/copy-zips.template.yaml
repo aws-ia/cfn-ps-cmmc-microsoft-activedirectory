@@ -139,3 +139,6 @@ Outputs:
         - CreateDestBucket
         - Ref: LambdaZipsBucket
         - Ref: DestinationBucket
+  QSS3BucketRegion:
+    Value:
+      Ref: QSS3BucketRegion
