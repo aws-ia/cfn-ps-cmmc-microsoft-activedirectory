@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This CloudFormation Template invokes another template responsible for copying files to a local region S3 Bucket for AWS Lambda. (qs-1ui8pjc5m)
+Parameters:
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: us-east-1
+    Description: The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
+    Type: String
+  DestinationBucket:
+    Type: String
+    Default: ''
+  SourceObjects:
+    Type: CommaDelimitedList
+    Default: ''
+Conditions:
+  CreateDestBucket:
+    Fn::Equals:
+      - Ref: DestinationBucket
+      - ''
+  UsingDefaultBucket:
+    Fn::Equals:
+      - Ref: QSS3BucketName
+      - aws-quickstart
+Resources:
+  LambdaZipsBucket:
+    Condition: CreateDestBucket
+    Type: AWS::S3::Bucket
+  CopyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ConfigPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: Logging
+                Effect: Allow
+                Action: logs:*
+                Resource: '*'
+              - Sid: S3Get
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource:
+                  Fn::Sub:
+                    - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                    - S3Bucket:
+                        Fn::If:
+                          - UsingDefaultBucket
+                          - Fn::Sub: ${QSS3BucketName}-${AWS::Region}
+                          - Ref: QSS3BucketName
+              - Sid: S3Put
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource:
+                  Fn::Sub:
+                    - arn:${AWS::Partition}:s3:::${DestBucket}/*
+                    - DestBucket:
+                        Fn::If:
+                          - CreateDestBucket
+                          - Ref: LambdaZipsBucket
+                          - Ref: DestinationBucket
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyActionWildcard
+          ignore_reasons:
+            - EIAMPolicyActionWildcard: Intent assumed for initial migration.
+  CopyZips:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CopyZipsFunction
+          - Arn
+      DestRegion:
+        Ref: AWS::Region
+      DestBucket:
+        Fn::If:
+          - CreateDestBucket
+          - Ref: LambdaZipsBucket
+          - Ref: DestinationBucket
+      SourceBucket:
+        Fn::If:
+          - UsingDefaultBucket
+          - Fn::Sub: ${QSS3BucketName}-${AWS::Region}
+          - Ref: QSS3BucketName
+      Prefix:
+        Ref: QSS3KeyPrefix
+      Objects:
+        Ref: SourceObjects
+  CopyZipsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Copies objects from a source S3 bucket to a destination
+      Handler: index.handler
+      Runtime: python3.11
+      Role:
+        Fn::GetAtt:
+          - CopyRole
+          - Arn
+      Timeout: 240
+      Code:
+        ZipFile: "import json\nimport logging\nimport threading\nimport boto3\n import cfnresponse\ndef copy_objects(source_bucket, dest_bucket, prefix, objects):\n    s3 = boto3.client('s3')\n    for o\
+          \ in objects:\n        key = prefix + o\n        copy_source = {\n            'Bucket': source_bucket,\n            'Key': key\n        }\n        s3.copy_object(CopySource=copy_source, Bucket=dest_bucket,\
+          \ Key=key)\ndef delete_objects(bucket, prefix, objects):\n    s3 = boto3.client('s3')\n    objects = {'Objects': [{'Key': prefix + o} for o in objects]}\n    s3.delete_objects(Bucket=bucket, Delete=objects)\n\
+          \ def timeout(event, context):\n    logging.error('Execution is about to time out, sending failure response to CloudFormation')\n    cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)\n\
+          def handler(event, context):\n    # make sure we send a failure to CloudFormation if the function is going to timeout\n    timer = threading.Timer((context.get_remaining_time_in_millis() / 1000.00)\
+          \ - 0.5, timeout, args=[event, context])\n    timer.start()\n    print('Received event: %s' % json.dumps(event))\n    status = cfnresponse.SUCCESS\n    try:\n        source_bucket = event['ResourceProperties']['SourceBucket']\n\
+          \        dest_bucket = event['ResourceProperties']['DestBucket']\n        prefix = event['ResourceProperties']['Prefix']\n        objects = event['ResourceProperties']['Objects']\n        if event['RequestType']\
+          \ == 'Delete':\n            delete_objects(dest_bucket, prefix, objects)\n        else:\n            copy_objects(source_bucket, dest_bucket, prefix, objects)\n    except Exception as e:\n   \
+          \     logging.error('Exception: %s' % e, exc_info=True)\n        status = cfnresponse.FAILED\n    finally:\n        timer.cancel()\n        cfnresponse.send(event, context, status, {}, None)\n"
+Outputs:
+  LambdaZipsBucket:
+    Description: S3 Bucket for the Lambda Function Code
+    Value:
+      Fn::If:
+        - CreateDestBucket
+        - Ref: LambdaZipsBucket
+        - Ref: DestinationBucket
+  QSS3BucketRegion:
+    Value:
+      Ref: QSS3BucketRegion
