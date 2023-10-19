@@ -240,7 +240,7 @@ Parameters:
   LambdaZipsBucket:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: S3 bucket name where Lambda function zip files are location. Can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
-    Default: quickstart-lambda-zips
+    Default: cfn-ps-lambda-zips
     Description: S3 bucket name for storing Lambda fuction zip files. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Type: String
   LogsS3BucketName:
@@ -278,7 +278,7 @@ Parameters:
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
-    Default: aws-ia-us-east-1
+    Default: aws-ia
     Description: S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Type: String
   QSS3BucketRegion:
@@ -317,7 +317,7 @@ Conditions:
   UsingDefaultBucket:
     Fn::Equals:
       - Ref: QSS3BucketName
-      - aws-quickstart
+      - aws-ia
   NewS3Buckets:
     Fn::Equals:
       - Ref: CreateS3Buckets
